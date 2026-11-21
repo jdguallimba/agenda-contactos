@@ -104,10 +104,3 @@ La aplicación fue publicada utilizando el servicio de hosting gratuito Infinity
 ## Autor
 
 Proyecto académico desarrollado como parte de la formación universitaria en Ingeniería en Tecnologías de la Información.
-
-└── README.md
-```
-
-## Autor
-
-Proyecto académico desarrollado como parte de la actividad de desarrollo web con PHP y MySQL.
