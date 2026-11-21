@@ -1,67 +1,62 @@
 # Agenda Personal de Contactos
 
-## Descripción del proyecto
+Aplicación web desarrollada en PHP y MySQL que permite a los usuarios registrar una cuenta, iniciar sesión y administrar sus contactos personales desde una interfaz sencilla.
 
-La Agenda Personal de Contactos es una aplicación web desarrollada con PHP y MySQL que permite a los usuarios registrarse, iniciar sesión y administrar sus contactos personales desde una interfaz sencilla.
+##  Aplicación desplegada
 
-El sistema permite que cada usuario gestione su propia información de manera independiente, evitando que pueda visualizar o modificar los contactos pertenecientes a otras cuentas.
-
-Este proyecto fue desarrollado como parte de la actividad académica sobre metodologías de desarrollo web, aplicando conceptos de programación orientada a eventos, autenticación, manejo de sesiones y conexión con bases de datos.
+**Enlace público:** [https://agenda-contactos-utpl.great-site.net/login.php](https://agenda-contactos-utpl.great-site.net/login.php)
 
 ## Tecnologías utilizadas
 
-- **PHP:** desarrollo de la lógica del sistema.
-- **MySQL / MariaDB:** almacenamiento y administración de la información.
-- **HTML5:** estructura de las páginas web.
-- **CSS3:** diseño y presentación visual.
-- **XAMPP:** entorno de desarrollo local.
-- **phpMyAdmin:** administración de la base de datos.
+- PHP
+- MySQL
+- HTML5
+- CSS3
+- PDO
+- XAMPP
+- InfinityFree
 
 ## Funcionalidades principales
 
-- Registro de nuevos usuarios.
+- Registro de usuarios.
 - Inicio y cierre de sesión.
-- Autenticación mediante correo electrónico y contraseña.
-- Registro de contactos personales.
-- Consulta de contactos registrados.
-- Edición de la información de los contactos.
-- Eliminación de contactos.
-- Separación de contactos según la cuenta del usuario.
-- Validación de los datos ingresados en los formularios.
+- Administración de contactos.
+- Agregar, editar y eliminar contactos.
+- Búsqueda por nombre, correo electrónico o ciudad.
+- Ordenamiento por fecha, nombre y ciudad.
+- Clasificación de contactos por categorías.
+- Marcado y filtrado de contactos favoritos.
+- Acceso individual a los contactos de cada usuario.
 
-## Seguridad implementada
+## Seguridad
 
-Para proteger la información de los usuarios, se aplicaron algunas medidas de seguridad:
+- Contraseñas protegidas mediante `password_hash()` y `password_verify()`.
+- Consultas preparadas mediante PDO.
+- Manejo de sesiones.
+- Protección CSRF.
+- Validación y escape de datos para evitar la inserción de contenido HTML no deseado.
+- Relación de los contactos con el usuario correspondiente mediante claves foráneas.
 
-- **Contraseñas cifradas:** se utiliza `password_hash()` para almacenar las contraseñas de forma segura y `password_verify()` para comprobarlas durante el inicio de sesión.
-- **Consultas preparadas:** se utiliza PDO y consultas preparadas para reducir el riesgo de inyección SQL.
-- **Control de sesiones:** se verifica que el usuario haya iniciado sesión antes de acceder a las páginas privadas.
-- **Protección CSRF:** se implementan tokens de seguridad en los formularios que modifican información.
-- **Protección de datos:** se utiliza `htmlspecialchars()` para evitar la interpretación de contenido HTML no confiable.
-- **Separación de información:** cada contacto se relaciona con el usuario que lo registró mediante una clave foránea.
+## Requisitos para instalación local
 
-## Requisitos para ejecutar el proyecto
+- XAMPP.
+- PHP 8.4 o compatible.
+- MySQL.
+- Navegador web.
+- Visual Studio Code.
 
-- Windows o un sistema operativo compatible.
-- XAMPP instalado.
-- PHP 8.4 o una versión compatible.
-- MySQL o MariaDB.
-- Navegador web actualizado.
+## Instalación local
 
-## Instalación y ejecución
-
-1. Instalar y abrir XAMPP.
-2. Iniciar los servicios de Apache y MySQL.
-3. Copiar la carpeta `agenda_contactos` dentro del directorio `htdocs` de XAMPP.
-4. Ingresar a phpMyAdmin desde `http://localhost/phpmyadmin/`.
+1. Descargar o clonar el repositorio de GitHub.
+2. Copiar la carpeta del proyecto dentro del directorio `htdocs` de XAMPP.
+3. Iniciar Apache y MySQL desde el panel de XAMPP.
+4. Abrir phpMyAdmin.
 5. Crear una base de datos llamada `agenda_contactos`.
-6. Seleccionar la base de datos e importar el archivo `database/agenda_contactos.sql`.
-7. Verificar los datos de conexión en el archivo `config/conexion.php`. Si se utilizan credenciales diferentes, actualizarlas.
-8. Abrir el navegador e ingresar a:
+6. Importar el archivo `database/agenda_contactos.sql`.
+7. Revisar la configuración de conexión en `config/conexion.php`, utilizando los datos de la instalación local.
+8. Abrir el proyecto desde el navegador:
 
-   `http://localhost/agenda_contactos/`
-
-9. Registrarse con una cuenta nueva e iniciar sesión para utilizar la aplicación.
+   [http://localhost/agenda_contactos/](http://localhost/agenda_contactos/)
 
 ## Estructura del proyecto
 
@@ -71,14 +66,14 @@ agenda_contactos/
 ├── config/
 │   └── conexion.php
 │
-├── includes/
-│   └── auth.php
-│
 ├── css/
 │   └── estilos.css
 │
 ├── database/
 │   └── agenda_contactos.sql
+│
+├── includes/
+│   └── auth.php
 │
 ├── index.php
 ├── registro.php
@@ -90,6 +85,26 @@ agenda_contactos/
 ├── eliminar_contacto.php
 ├── logout.php
 │
+├── README.md
+└── .gitignore
+```
+
+## Despliegue web
+
+La aplicación fue publicada utilizando el servicio de hosting gratuito InfinityFree y una base de datos MySQL.
+
+**URL pública:**
+
+[https://agenda-contactos-utpl.great-site.net/](https://agenda-contactos-utpl.great-site.net/)
+
+**Inicio de sesión:**
+
+[https://agenda-contactos-utpl.great-site.net/login.php](https://agenda-contactos-utpl.great-site.net/login.php)
+
+## Autor
+
+Proyecto académico desarrollado como parte de la formación universitaria en Ingeniería en Tecnologías de la Información.
+
 └── README.md
 ```
 
