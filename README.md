@@ -88,6 +88,14 @@ agenda_contactos/
 ├── README.md
 └── .gitignore
 ```
+## Mejoras implementadas respecto a la versión anterior
+
+Se incorporaron las siguientes mejoras para facilitar la administración de los contactos:
+
+- **Búsqueda:** permite localizar contactos por nombre, correo electrónico o ciudad.
+- **Ordenamiento:** permite organizar los contactos por nombre, ciudad y fecha de creación.
+- **Categorías:** se incorporó la clasificación de contactos en Familia, Amigos, Trabajo, Universidad y Otro.
+- **Favoritos:** permite marcar contactos como favoritos y visualizar únicamente los contactos seleccionados.
 
 ## Despliegue web
 
