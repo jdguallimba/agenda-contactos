@@ -4,17 +4,58 @@
 require_once __DIR__ . "/includes/auth.php";
 require_once __DIR__ . "/config/conexion.php";
 
-$sql = "SELECT * FROM contactos
-        WHERE id_usuario = :id_usuario
-        ORDER BY id DESC";
+$busqueda = trim($_GET["buscar"] ?? "");
+$orden = $_GET["orden"] ?? "id";
+$categoria = $_GET["categoria"] ?? "";
+$favoritos = $_GET["favoritos"] ?? "";
+
+$ordenesPermitidos = [
+    "nombre" => "contactos.nombre ASC",
+    "ciudad" => "contactos.ciudad ASC",
+    "id" => "contactos.id DESC"
+];
+
+$ordenSQL = $ordenesPermitidos[$orden] ?? "contactos.id DESC";
+
+$sql = "SELECT contactos.*, categorias.nombre AS nombre_categoria
+        FROM contactos
+        LEFT JOIN categorias ON contactos.id_categoria = categorias.id
+        WHERE contactos.id_usuario = :id_usuario";
+
+$parametros = [
+    ":id_usuario" => $_SESSION["usuario_id"]
+];
+
+if ($busqueda !== "") {
+    $sql .= " AND (
+        contactos.nombre LIKE :buscar
+        OR contactos.correo LIKE :buscar
+        OR contactos.ciudad LIKE :buscar
+    )";
+
+    $parametros[":buscar"] = "%" . $busqueda . "%";
+}
+
+if ($categoria !== "") {
+    $sql .= " AND contactos.id_categoria = :categoria";
+    $parametros[":categoria"] = $categoria;
+}
+
+if ($favoritos === "1") {
+    $sql .= " AND contactos.favorito = 1";
+}
+
+$sql .= " ORDER BY " . $ordenSQL;
 
 $consulta = $conexion->prepare($sql);
-
-$consulta->execute([
-    ":id_usuario" => $_SESSION["usuario_id"]
-]);
-
+$consulta->execute($parametros);
 $contactos = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+$consultaCategorias = $conexion->query(
+    "SELECT * FROM categorias ORDER BY nombre ASC"
+);
+
+$categorias = $consultaCategorias->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -25,110 +66,260 @@ $contactos = $consulta->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis contactos</title>
+
     <link rel="stylesheet" href="css/estilos.css">
+
+    <style>
+        /* Alineacion del filtro de favoritos */
+        .favorite-filter {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 9px;
+            margin: 18px 0;
+            padding: 0;
+            min-height: 24px;
+        }
+
+        .favorite-filter input[type="checkbox"] {
+            display: block;
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            margin: 0;
+            padding: 0;
+            position: static;
+            transform: none;
+            flex: 0 0 18px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        .favorite-filter label {
+            display: block;
+            margin: 0;
+            padding: 0;
+            line-height: 24px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+
 </head>
 
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <div class="card">
+    <div class="card">
 
-            <h1>Mis contactos</h1>
+        <h1>Mis contactos</h1>
 
-            <p class="subtitle">
-                Aquí puedes consultar y administrar tus contactos registrados.
-            </p>
+        <p class="subtitle">
+            Aquí puedes consultar y administrar tus contactos registrados.
+        </p>
 
-            <div class="actions">
+        <div class="actions">
 
-                <a href="agregar_contacto.php" class="btn">
-                    Agregar nuevo contacto
-                </a>
+            <a href="agregar_contacto.php" class="btn">
+                Agregar nuevo contacto
+            </a>
 
-                <a href="dashboard.php" class="btn btn-secondary">
-                    Volver al panel
-                </a>
-
-            </div>
+            <a href="dashboard.php" class="btn btn-secondary">
+                Volver al panel
+            </a>
 
         </div>
 
-        <?php if (count($contactos) > 0): ?>
+    </div>
 
-            <div class="table-wrap">
+    <div class="card">
 
-                <table>
+        <h2>Buscar y filtrar contactos</h2>
 
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Teléfono</th>
-                            <th>Correo</th>
-                            <th>Ciudad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
+        <form method="GET" action="listar_contactos.php">
 
-                    <tbody>
+            <label for="buscar">
+                Buscar por nombre, correo o ciudad:
+            </label>
 
-                        <?php foreach ($contactos as $contacto): ?>
+            <input
+                type="text"
+                id="buscar"
+                name="buscar"
+                value="<?php echo htmlspecialchars($busqueda); ?>"
+                placeholder="Escribe para buscar..."
+            >
 
-                            <tr>
+            <label for="orden">Ordenar por:</label>
 
-                                <td><?php echo htmlspecialchars($contacto["nombre"]); ?></td>
+            <select name="orden" id="orden">
+                <option value="id" <?php echo $orden === "id" ? "selected" : ""; ?>>
+                    Más recientes
+                </option>
 
-                                <td><?php echo htmlspecialchars($contacto["telefono"]); ?></td>
+                <option value="nombre" <?php echo $orden === "nombre" ? "selected" : ""; ?>>
+                    Nombre
+                </option>
 
-                                <td><?php echo htmlspecialchars($contacto["correo"]); ?></td>
+                <option value="ciudad" <?php echo $orden === "ciudad" ? "selected" : ""; ?>>
+                    Ciudad
+                </option>
+            </select>
 
-                                <td><?php echo htmlspecialchars($contacto["ciudad"]); ?></td>
+            <label for="categoria">Categoría:</label>
 
-                                <td>
+            <select name="categoria" id="categoria">
 
-                                    <a href="editar_contacto.php?id=<?php echo $contacto["id"]; ?>"
-                                       class="btn btn-small">
-                                        Editar
-                                    </a>
+                <option value="">Todas las categorías</option>
 
-                                    <form action="eliminar_contacto.php"
-                                          method="POST"
-                                          class="inline-form"
-                                          onsubmit="return confirm('¿Seguro que deseas eliminar este contacto?');">
+                <?php foreach ($categorias as $cat): ?>
 
-                                        <input type="hidden" name="id"
-                                               value="<?php echo $contacto["id"]; ?>">
+                    <option
+                        value="<?php echo $cat["id"]; ?>"
+                        <?php echo (string)$categoria === (string)$cat["id"] ? "selected" : ""; ?>
+                    >
+                        <?php echo htmlspecialchars($cat["nombre"]); ?>
+                    </option>
 
-                                        <input type="hidden" name="csrf_token"
-                                               value="<?php echo htmlspecialchars($_SESSION["csrf_token"]); ?>">
+                <?php endforeach; ?>
 
-                                        <button type="submit" class="btn-danger btn-small">
-                                            Eliminar
-                                        </button>
+            </select>
 
-                                    </form>
+            <div class="favorite-filter">
 
-                                </td>
+                <input
+                    type="checkbox"
+                    id="favoritos"
+                    name="favoritos"
+                    value="1"
+                    <?php echo $favoritos === "1" ? "checked" : ""; ?>
+                >
 
-                            </tr>
-
-                        <?php endforeach; ?>
-
-                    </tbody>
-
-                </table>
+                <label for="favoritos">
+                    ★ Mostrar solo favoritos
+                </label>
 
             </div>
 
-        <?php else: ?>
+            <br>
 
-            <div class="empty-message">
-                No tienes contactos registrados. Puedes agregar uno utilizando el botón de arriba.
-            </div>
+            <button type="submit" class="btn">
+                Aplicar filtros
+            </button>
 
-        <?php endif; ?>
+            <a href="listar_contactos.php" class="btn btn-secondary">
+                Limpiar filtros
+            </a>
+
+        </form>
 
     </div>
+
+    <?php if (count($contactos) > 0): ?>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Ciudad</th>
+                        <th>Categoría</th>
+                        <th>Favorito</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <?php foreach ($contactos as $contacto): ?>
+
+                        <tr>
+
+                            <td>
+                                <?php echo htmlspecialchars($contacto["nombre"]); ?>
+                            </td>
+
+                            <td>
+                                <?php echo htmlspecialchars($contacto["telefono"]); ?>
+                            </td>
+
+                            <td>
+                                <?php echo htmlspecialchars($contacto["correo"]); ?>
+                            </td>
+
+                            <td>
+                                <?php echo htmlspecialchars($contacto["ciudad"]); ?>
+                            </td>
+
+                            <td>
+                                <?php echo htmlspecialchars($contacto["nombre_categoria"] ?? "Sin categoría"); ?>
+                            </td>
+
+                            <td>
+                                <?php echo $contacto["favorito"] ? "★ Sí" : "No"; ?>
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="editar_contacto.php?id=<?php echo $contacto["id"]; ?>"
+                                    class="btn btn-small"
+                                >
+                                    Editar
+                                </a>
+
+                                <form
+                                    action="eliminar_contacto.php"
+                                    method="POST"
+                                    class="inline-form"
+                                    onsubmit="return confirm('¿Seguro que deseas eliminar este contacto?');"
+                                >
+
+                                    <input
+                                        type="hidden"
+                                        name="id"
+                                        value="<?php echo $contacto["id"]; ?>"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="<?php echo htmlspecialchars($_SESSION["csrf_token"]); ?>"
+                                    >
+
+                                    <button type="submit" class="btn-danger btn-small">
+                                        Eliminar
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                    <?php endforeach; ?>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    <?php else: ?>
+
+        <div class="empty-message">
+            No se encontraron contactos con los criterios seleccionados.
+        </div>
+
+    <?php endif; ?>
+
+</div>
 
 </body>
 </html>

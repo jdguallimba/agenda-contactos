@@ -7,6 +7,9 @@ require_once __DIR__ . "/config/conexion.php";
 $mensaje = "";
 $tipo_mensaje = "";
 
+$consultaCategorias = $conexion->query("SELECT * FROM categorias ORDER BY nombre ASC");
+$categorias = $consultaCategorias->fetchAll(PDO::FETCH_ASSOC);
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (!hash_equals($_SESSION["csrf_token"], $_POST["csrf_token"] ?? "")) {
@@ -18,8 +21,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $telefono = trim($_POST["telefono"] ?? "");
     $correo = trim($_POST["correo"] ?? "");
     $ciudad = trim($_POST["ciudad"] ?? "");
+    $id_categoria = $_POST["id_categoria"] ?? "";
 
-    if ($nombre === "" || $telefono === "" || $correo === "" || $ciudad === "") {
+    if ($nombre === "" || $telefono === "" || $correo === "" || $ciudad === "" || $id_categoria === "") {
 
         $mensaje = "Todos los campos son obligatorios.";
         $tipo_mensaje = "error";
@@ -31,23 +35,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     } else {
 
-        $sql = "INSERT INTO contactos
-                (id_usuario, nombre, telefono, correo, ciudad)
-                VALUES
-                (:id_usuario, :nombre, :telefono, :correo, :ciudad)";
+        $verificar = $conexion->prepare("SELECT id FROM categorias WHERE id = :id");
+        $verificar->execute([":id" => $id_categoria]);
 
-        $consulta = $conexion->prepare($sql);
+        if (!$verificar->fetch()) {
 
-        $consulta->execute([
-            ":id_usuario" => $_SESSION["usuario_id"],
-            ":nombre" => $nombre,
-            ":telefono" => $telefono,
-            ":correo" => $correo,
-            ":ciudad" => $ciudad
-        ]);
+            $mensaje = "Selecciona una categoría válida.";
+            $tipo_mensaje = "error";
 
-        $mensaje = "Contacto agregado correctamente.";
-        $tipo_mensaje = "success";
+        } else {
+
+            $sql = "INSERT INTO contactos
+                    (id_usuario, nombre, telefono, correo, ciudad, id_categoria)
+                    VALUES
+                    (:id_usuario, :nombre, :telefono, :correo, :ciudad, :id_categoria)";
+
+            $consulta = $conexion->prepare($sql);
+
+            $consulta->execute([
+                ":id_usuario" => $_SESSION["usuario_id"],
+                ":nombre" => $nombre,
+                ":telefono" => $telefono,
+                ":correo" => $correo,
+                ":ciudad" => $ciudad,
+                ":id_categoria" => $id_categoria
+            ]);
+
+            $mensaje = "Contacto agregado correctamente.";
+            $tipo_mensaje = "success";
+        }
     }
 }
 
@@ -97,6 +113,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <label>Ciudad:</label>
                 <input type="text" name="ciudad" required>
+
+                <label>Categoría:</label>
+                <select name="id_categoria" required>
+                    <option value="">Selecciona una categoría</option>
+
+                    <?php foreach ($categorias as $categoria): ?>
+                        <option value="<?php echo $categoria["id"]; ?>">
+                            <?php echo htmlspecialchars($categoria["nombre"]); ?>
+                        </option>
+                    <?php endforeach; ?>
+
+                </select>
 
                 <button type="submit">Guardar contacto</button>
 
