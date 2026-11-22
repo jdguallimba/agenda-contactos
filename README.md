@@ -112,19 +112,19 @@ La aplicación fue publicada utilizando el servicio de hosting gratuito Infinity
 ## Capturas de pantalla
 
 ### Inicio de sesión
-![Inicio de sesión](capturas/01_login.png)
+![Inicio de sesión](<capturas de pantalla/01_login.png>)
 
 ### Panel principal
-![Panel principal](capturas/02_dashboard.png)
+![Panel principal](<capturas de pantalla/02_dashboard.png>)
 
 ### Administración de contactos
-![Listado de contactos](capturas/03_contactos.png)
+![Listado de contactos](<capturas de pantalla/03_contactos.png>)
 
 ### Búsqueda y ordenamiento
-![Búsqueda y ordenamiento](capturas/04_busqueda.png)
+![Búsqueda y ordenamiento](<capturas de pantalla/04_busqueda.png>)
 
 ### Categorías y favoritos
-![Categorías y favoritos](capturas/05_categorias_favoritos.png)
+![Categorías y favoritos](<capturas de pantalla/05_categorias_favoritos.png>)
 
 ## Autor
 
