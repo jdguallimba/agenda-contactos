@@ -112,19 +112,19 @@ La aplicación fue publicada utilizando el servicio de hosting gratuito Infinity
 ## Capturas de pantalla
 
 ### Inicio de sesión
-![Inicio de sesión](<https://github.com/jdguallimba/agenda-contactos/raw/main/capturas%20de%20pantalla/01_login.png>)
+![Inicio de sesión](<capturas de pantalla/01_login — Pantalla de inicio de sesión..png>)
 
 ### Panel principal
-![Panel principal](<https://github.com/jdguallimba/agenda-contactos/raw/main/capturas%20de%20pantalla/02_dashboard.png>)
+![Panel principal](<capturas de pantalla/02_dashboard — Panel principal..png>)
 
 ### Administración de contactos
-![Listado de contactos](<https://github.com/jdguallimba/agenda-contactos/raw/main/capturas%20de%20pantalla/03_contactos.png>)
+![Listado de contactos](<capturas de pantalla/03_contactos — Listado de contactos..png>)
 
 ### Búsqueda y ordenamiento
-![Búsqueda y ordenamiento](<https://github.com/jdguallimba/agenda-contactos/raw/main/capturas%20de%20pantalla/04_busqueda.png>)
+![Búsqueda y ordenamiento](<capturas de pantalla/04_busqueda — Búsqueda y ordenamiento..png>)
 
 ### Categorías y favoritos
-![Categorías y favoritos](<https://github.com/jdguallimba/agenda-contactos/raw/main/capturas%20de%20pantalla/05_categorias_favoritos.png>)
+![Categorías y favoritos](<capturas de pantalla/05_categorias_favoritos — Categorías y favoritos..png>)
 
 ## Autor
 
